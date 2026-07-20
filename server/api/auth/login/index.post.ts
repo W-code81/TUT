@@ -2,7 +2,7 @@ import { userTable } from "~~/server/db/schema";
 import db from "../../../db/index";
 import bcrypt from "bcrypt"
 import { eq } from "drizzle-orm"; //for filtering the data
-import jwt from 'jsonwebtoken'
+import { signToken } from "~~/server/utils/jwt";
 
 export default defineEventHandler(async (event) => {
 
@@ -27,14 +27,10 @@ export default defineEventHandler(async (event) => {
             throw createError({ statusCode: 404, message: "incorrect password" });
         }
 
-        const token = jwt.sign({ id: foundUser.id, name: foundUser.name }, process.env.JWT_PRIVATE!, { expiresIn: '1d', algorithm: 'HS256' })
+        const token = signToken(foundUser.id)
 
         return {
-            token,
-            // user: {
-            //     id: foundUser.id,
-            //     name: foundUser.name,
-            // }
+            token
         }
     } catch (error) {
         throw createError({ statusCode: 500, message: `${error}` });
