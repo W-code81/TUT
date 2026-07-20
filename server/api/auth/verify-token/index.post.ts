@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken"
+import { verifyToken } from "~~/server/utils/jwt";
 export default defineEventHandler(async (event) =>{
     const {token} = await readBody(event)
 
@@ -6,13 +6,11 @@ export default defineEventHandler(async (event) =>{
         throw createError({statusCode: 400, message:"no token was passed" })
     }
 
-    const user = jwt.verify(token, process.env.JWT_PRIVATE!)
+    const user = verifyToken(token)
 
     if (user){
       return { succces:true,
-        user:{
-            user
-        }
+        user
       }
     }
 
