@@ -1,0 +1,32 @@
+{
+  "name": "tutorial",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^12.11.1",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "jsonwebtoken": "^9.0.3",
+    "nuxt": "^4.4.8",
+    "tailwindcss": "^4.3.2",
+    "vue": "^3.5.38",
+    "vue-router": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^26.1.0",
+    "@types/sqlite3": "^3.1.11",
+    "drizzle-kit": "^0.31.10"
+  }
+}
