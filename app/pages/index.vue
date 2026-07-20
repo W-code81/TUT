@@ -14,7 +14,7 @@
 
                     <div class="flex flex-col space-y-2">
                         <label class="text-gray-400 text-xs uppercase tracking-widest">Password</label>
-                        <input v-model="form.password" type="password" placeholder="123456" name="name"
+                        <input @keydown="submit" v-model="form.password" type="password" placeholder="123456" name="password"
                             class="border bg-white p-1 rounded-sm focus:outline-none">
                     </div>
                 </div>
@@ -85,30 +85,6 @@ const handleSubmit = async () => {
             return;
         }
 
-        // const res = await $fetch.raw<{ user: any; createdUser: any; message?: string }>(`/api/auth/${tab.value}`, {
-        //     method: 'POST',
-        //     body: { name: form.name, password: form.password },
-        //     async onResponseError({ response }) {
-        //         if (response.status === 401) {
-        //             const data = response._data as { message?: string }
-        //             error.value = data?.message ?? 'Unauthorized'
-        //         }
-        //     }
-
-        // })
-        // console.log(res)
-
-        // if (!res.ok) {
-        //     return error.value = "failed to register"
-        // }
-
-        // if (res.ok && res._data) {
-        //     form.name = ''
-        //     form.password = ''
-        //     user.value = res._data.user || res._data.createdUser
-        //     goToHome()
-        // }
-
         const data = await $fetch<{ token: any }>(
             `/api/auth/${tab.value}`,
             {
@@ -157,5 +133,11 @@ const handleSubmit = async () => {
         loading.value = false
     }
 
+}
+// submits user data via enter key
+const submit = (e : any) => {
+   if (e.key === "Enter" && !e.shiftKey){
+    handleSubmit()
+   }
 }
 </script>
