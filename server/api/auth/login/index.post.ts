@@ -8,13 +8,13 @@ export default defineEventHandler(async (event) => {
 
     try {
         const body = await readBody(event);
-        const { name, password } = body as { name: string; password: string };
+        const { email, password } = body as { email: string; password: string };
 
-        if (!(name && password)) {
-            throw createError({ statusCode: 400, message: "name or password not provided" });
+        if (!(email && password)) {
+            throw createError({ statusCode: 400, message: "email or password not provided" });
         }
 
-        const user = await db.select().from(userTable).where(eq(userTable.name, name));
+        const user = await db.select().from(userTable).where(eq(userTable.email, email));
 
         if (user.length === 0 || !user[0]) {
             throw createError({ statusCode: 404, message: "User not found" })
