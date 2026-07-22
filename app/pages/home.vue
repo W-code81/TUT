@@ -1,25 +1,23 @@
 <template>
-    <div class="flex flex-col items-center gap-4 overflow-hidden z-10 mx-auto mt-32">
-        <h1 class="text-bold text-5xl"> <span>Welcome back {{ user?.name}}</span></h1>
+    <div class="bg-[url('/images/cream-pixels.png')]">
+        <nav class="flex items-center justify-between px-2 py-4 bg-black/50 backdrop-blur-md  sticky top-0">
+            <div class="text-white cursor-pointer" @click="() => router.push('/')">logo</div>
+            <div>
+                <button class="outline-none cursor-pointer" @click="logOut">Logout</button>
+            </div>
+        </nav>
+        <div class="flex flex-col items-center gap-4 overflow-hidden z-10 mx-auto mt-32">
+            <h1 class="text-bold text-5xl"> <span>Welcome back {{ user?.name }}</span></h1>
 
-       
-        <!-- <p class="text-lg">this is the home page </p>
-        <NuxtLink to="/about" class="text-blue-500 hover:text-blue-700">About</NuxtLink>
-        <button class="border p-4 rounded-2xl hover:bg-black hover:text-white transition-all suration-200"
-            @click="count++">{{ count }}</button>
-        <p v-if="pending">loading...</p>
-        <p v-if="error">{{ error.data.message }}</p>
-        <ul v-else>
-            <li v-for="item in data?.database" :key="item">{{ item }}</li>
-        </ul> -->
-
-
+            <img src="/Images/potabro.jpg" class="w-25 h-25 hover:scale-20 transition-all duration-200 animate-pulse" />
+        </div>
     </div>
+
 </template>
 
 <script setup lang="ts">
 import { useLocalStorage } from '../composables/useLocalStorage'
-
+const router = useRouter()
 
 interface User {
     id: number,
@@ -41,30 +39,24 @@ useHead({
         }]
 })
 
-onMounted(async () => {
-    const token = useCookie('jwt_token')
+const logOut = () => {
+    // clears user state (returns it to default - in this case null) and storage key
+    clear()
 
-    const router = useRouter()
-    const goLogin = () =>{
+    // clears localstorage token
+    localStorage.removeItem("token")
+
+    // redirects to login
+    router.push("/")
+}
+
+onMounted(async () => {
+
+    const goLogin = () => {
         return router.push('/')
     }
-
-    if (!token){
-        return goLogin
-    }
-
-    const res = await $fetch('/api/auth/verify-token',{
-        method: 'POST',
-        body: {token:token.value}
-    })
-
-    if(!res){
-        return goLogin
-    }
-
-    user.value = ((res.user.user as any) as User)
+    
+    // user.value = res.user
     console.log('Home page mounted');
 });
-
-// const { data, pending, error } = useFetch("/api/hello", { server: false })
 </script>
