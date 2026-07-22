@@ -1,11 +1,23 @@
 export async function fetchCurrentUser() {
+    interface User {
+        id: number,
+        name?: string
+    }
+
     const token = localStorage.getItem("token")
 
     if (!token) return null
 
-    return await $fetch("/api/auth/me", {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
+    try {
+        const me = await $fetch<{ user: User }>("/api/auth/me", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+            return me
+
+    } catch {
+        localStorage.removeItem("token")
+        return null
+    }
 }
