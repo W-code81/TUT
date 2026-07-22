@@ -9,7 +9,8 @@ const userTable = sqliteTable("users", {
     id: int().primaryKey({autoIncrement: true}),
     name: text().notNull(),
     password: text().notNull(),
-    resetPasswordToken: text()
+    resetPasswordToken: text(), // allow null when no reset token is set (text() is nullable by default)
+    resetPasswordExpires: int(),// integer builder in this setup is nullable by default, so omit .nullable()
 })
 
 export default fruitsTable;
