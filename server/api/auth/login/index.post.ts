@@ -1,18 +1,18 @@
 import { userTable } from "~~/server/db/schema";
 import db from "../../../db/index";
-import bcrypt from "bcrypt"
 import { eq } from "drizzle-orm"; //for filtering the data
 import { signToken } from "~~/server/utils/jwt";
+import { setAuthCookie } from "~~/server/utils/cookies";
+import { validateLogin } from "~~/server/validation/auth";
+import { comparePassword } from "~~/server/utils/password";
+import { success } from "~~/server/utils/response";
+import { publicUser } from "~~/server/utils/user";
 
 export default defineEventHandler(async (event) => {
 
     try {
         const body = await readBody(event);
-        const { email, password } = body as { email: string; password: string };
-
-        if (!(email && password)) {
-            throw createError({ statusCode: 400, message: "email or password not provided" });
-        }
+        const { email, password } = validateLogin(body);
 
         const user = await db.select().from(userTable).where(eq(userTable.email, email));
 
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
         }
 
         const foundUser = user[0];
-        const isPasswordValid = await bcrypt.compare(password, foundUser.password);
+        const isPasswordValid = await comparePassword(password, foundUser.password);
 
         if (!isPasswordValid) {
             throw createError({ statusCode: 404, message: "incorrect password" });
@@ -29,11 +29,12 @@ export default defineEventHandler(async (event) => {
 
         const token = signToken(foundUser.id)
 
-        return {
-            token
-        }
+        setAuthCookie(event, token);
+
+        return success( publicUser(foundUser), "Log in successful")
+
     } catch (error) {
-        throw createError({ statusCode: 500, message: `${error}` });
+        throw error
     }
 
 
