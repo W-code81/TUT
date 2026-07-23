@@ -5,29 +5,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import { fetchCurrentUser } from './composables/useAuth'
-import { useLocalStorage } from './composables/useLocalStorage'
+<script lang="ts" setup>
+import { useAuth } from './composables/useAuth';
 
-interface User {
-    id: number,
-    name?: string
-}
+const { fetchUser } = useAuth()
 
-interface FetchCurrentUserResponse {
-    user?: User
-}
-
-const { value: user } = useLocalStorage<User | null>(
-    "user",
-    null
-)
-
-onMounted(async () => {
-    const me = await fetchCurrentUser() as FetchCurrentUserResponse
-
-    if (me.user) {
-        user.value = me.user
-    }
+onMounted(() => {
+    fetchUser()
 })
 </script>
