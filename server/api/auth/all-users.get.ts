@@ -1,11 +1,16 @@
+import { success } from "~~/server/utils/response";
 import db from "../../db/index";
-import {userTable} from "../../db/schema";
+import { userTable } from "../../db/schema";
+import { publicUser } from "~~/server/utils/user";
 
-export default defineEventHandler(async () => {
-  try {
-    return await db.select().from(userTable);
-  } catch (error) {
-    throw createError({statusCode:500 , message: "failed to fetch all users"})
-  }
-  
+export default defineEventHandler(async (event) => {
+
+  await requireUser(event);
+
+  const users = await db.select().from(userTable);
+
+  return success(
+    users.map(publicUser)
+  );
+
 });
