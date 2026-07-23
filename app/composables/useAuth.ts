@@ -1,23 +1,39 @@
-export async function fetchCurrentUser() {
-    interface User {
-        id: number,
-        name?: string
+interface User {
+    id: number
+    email: string
+    nickname: string
+}
+
+export function useAuth() {
+    //user state 
+    const user = useState<User | null>("auth-user", () => null);
+
+    async function fetchUser() {
+        try {
+            const res = await $fetch<{
+                success: boolean
+                data: User
+            }>("/api/auth/me")
+
+            user.value = res.data
+        } catch {
+            user.value = null
+        }
     }
 
-    const token = localStorage.getItem("token")
-
-    if (!token) return null
-
-    try {
-        const me = await $fetch<{ user: User }>("/api/auth/me", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+    async function logout() {
+        await $fetch("/api/auth/logout", {
+            method: "POST"
         })
-            return me
 
-    } catch {
-        localStorage.removeItem("token")
-        return null
+        user.value = null
+
+        await navigateTo("/login")
+    }
+
+    return {
+        user,
+        fetchUser,
+        logout,
     }
 }
