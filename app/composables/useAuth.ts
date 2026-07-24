@@ -28,7 +28,7 @@ export function useAuth() {
 
         user.value = null
 
-        await navigateTo("/login")
+        await navigateTo("/")
     }
 
     return {
